@@ -14,7 +14,13 @@ namespace DontPanic.CV.Collections
         protected const int DefaultElementCount = 512 * 424;
         public IntPtr InternalArray { get; private set; }
         protected int _capacity = 0, _numberOfElements = 0;
+        protected int ItemLength { get; private set; }
         #endregion
+
+        public BaseValueList()
+        {
+            ItemLength = Marshal.SizeOf<T>(); 
+        }
 
         #region IList<T>
         public abstract T this[int index]
@@ -61,7 +67,9 @@ namespace DontPanic.CV.Collections
             return GetIEnumerableEnumerator(); 
         }
 
-        protected abstract IEnumerator GetIEnumerableEnumerator(); 
+        protected abstract IEnumerator GetIEnumerableEnumerator();
+
+        protected abstract void CopyBuffers(IntPtr source, IntPtr destination, int numberOfElements); 
         #endregion
 
         #region IDisposable
@@ -84,29 +92,23 @@ namespace DontPanic.CV.Collections
         #endregion
 
         #region Allocators
-        protected static IntPtr AllocateBuffer(int numberOfElements)
+        protected IntPtr AllocateBuffer(int capacity)
         {
-            int tSize = Marshal.SizeOf<T>();
-            return Marshal.AllocHGlobal(tSize * numberOfElements);
+            InternalArray = Marshal.AllocHGlobal(ItemLength * capacity);
+            _capacity = capacity; 
+            return InternalArray; 
         }
-        protected static IntPtr ReallocateBuffer(int newNumberOfElements,
-            int currentNumberOfElements, IntPtr currentBuffer)
+        protected IntPtr ReallocateBuffer(int newCapacity,
+            int currentNumberOfElements)
         {
-            IntPtr newBuffer = AllocateBuffer(newNumberOfElements);
+            IntPtr newBuffer = Marshal.AllocHGlobal(ItemLength * newCapacity);
 
-            unsafe
-            {
-                Byte* currentPointer = (Byte*)currentBuffer.ToPointer();
-                Byte* newPointer = (Byte*)newBuffer.ToPointer();
-                int tSize = Marshal.SizeOf<T>();
+            CopyBuffers(InternalArray, newBuffer, currentNumberOfElements); 
 
-                for (int c = 0; c < currentNumberOfElements * tSize; c++)
-                {
-                    newPointer[c] = currentPointer[c];
-                }
-            }
+            Marshal.FreeHGlobal(InternalArray);
 
-            Marshal.FreeHGlobal(currentBuffer);
+            InternalArray = newBuffer;
+            _capacity = newCapacity;
 
             return newBuffer; 
         }

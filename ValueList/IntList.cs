@@ -16,6 +16,10 @@ namespace DontPanic.CV.Collections
         #region Constructors and Destructors
         public IntList(int capacity)
         {
+            if(capacity <= 0)
+            {
+                throw new ArgumentException("Capacity must be greater than zero."); 
+            }
             unsafe
             {
                 _bufferPointer = (int*)AllocateBuffer(capacity).ToPointer();
@@ -56,10 +60,24 @@ namespace DontPanic.CV.Collections
             }
         }
 
+        public void UnsafeAdd(int item)
+        {
+            unsafe
+            {
+                _bufferPointer[base._numberOfElements++] = item;
+            }
+        }
+
         public override void Add(int item)
         {
             unsafe
             {
+                if(base._numberOfElements >= base._capacity)
+                {
+                    _bufferPointer = 
+                        (int*)ReallocateBuffer(base._capacity * 2, 
+                        base._numberOfElements).ToPointer(); 
+                }
                 _bufferPointer[base._numberOfElements++] = item;
             }
         }
@@ -151,6 +169,20 @@ namespace DontPanic.CV.Collections
         protected override IEnumerator GetIEnumerableEnumerator()
         {
             return this; 
+        }
+
+        protected override void CopyBuffers(IntPtr source, IntPtr destination, int numberOfElements)
+        {
+            unsafe
+            {
+                int* currentPointer = (int*)InternalArray.ToPointer();
+                int* newPointer = (int*)destination.ToPointer();
+
+                for (int c = 0; c < numberOfElements; c++)
+                {
+                    newPointer[c] = currentPointer[c];
+                }
+            }
         }
 
         public int Current
