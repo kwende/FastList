@@ -23,6 +23,7 @@ namespace Tests
             }
             sw.Stop();
             Console.WriteLine("Total time: " + sw.ElapsedMilliseconds + " ms");
+            Console.WriteLine(list[100]);
 
             List<int> list2 = new List<int>(size);
             Stopwatch sw2 = new Stopwatch();
