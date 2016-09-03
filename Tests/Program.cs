@@ -35,7 +35,7 @@ namespace Tests
             sw2.Stop();
             Console.WriteLine("Total time: " + sw2.ElapsedMilliseconds + "ms");
 
-            Console.ReadLine(); 
+            Console.ReadLine();
         }
     }
 }

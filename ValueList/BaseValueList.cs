@@ -58,8 +58,10 @@ namespace DontPanic.CV.Collections
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            throw new NotImplementedException(); 
+            return GetIEnumerableEnumerator(); 
         }
+
+        protected abstract IEnumerator GetIEnumerableEnumerator(); 
         #endregion
 
         #region IDisposable
