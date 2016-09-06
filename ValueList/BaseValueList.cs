@@ -101,16 +101,23 @@ namespace DontPanic.CV.Collections
         protected IntPtr ReallocateBuffer(int newCapacity,
             int currentNumberOfElements)
         {
-            IntPtr newBuffer = Marshal.AllocHGlobal(ItemLength * newCapacity);
+            if (newCapacity < currentNumberOfElements)
+            {
+                throw new ArgumentOutOfRangeException("newCapacity", newCapacity, "Must be larger thatn currentNumberOfElements"); 
+            }
+            else
+            {
+                IntPtr newBuffer = Marshal.AllocHGlobal(ItemLength * newCapacity);
 
-            CopyBuffers(InternalArray, newBuffer, currentNumberOfElements); 
+                CopyBuffers(InternalArray, newBuffer, currentNumberOfElements);
 
-            Marshal.FreeHGlobal(InternalArray);
+                Marshal.FreeHGlobal(InternalArray);
 
-            InternalArray = newBuffer;
-            _capacity = newCapacity;
+                InternalArray = newBuffer;
+                _capacity = newCapacity;
 
-            return newBuffer; 
+                return newBuffer;
+            }
         }
         #endregion
     }
