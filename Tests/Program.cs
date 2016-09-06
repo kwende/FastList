@@ -22,7 +22,7 @@ namespace Tests
                 list.Add(c);
             }
             sw.Stop();
-            Console.WriteLine("IntList Reallocation Time: " + sw.ElapsedMilliseconds + " ms");
+            Console.WriteLine("IntList Reallocation Time: " + sw.ElapsedMilliseconds / 1000.0f + " ms");
 
             List<int> list2 = new List<int>(size / 1000);
             Stopwatch sw2 = new Stopwatch();
@@ -32,7 +32,7 @@ namespace Tests
                 list2.Add(c);
             }
             sw2.Stop();
-            Console.WriteLine("List<int> Reallocation Time: " + sw2.ElapsedMilliseconds + "ms");
+            Console.WriteLine("List<int> Reallocation Time: " + sw2.ElapsedMilliseconds / 1000.0f + "ms");
 
             //Console.ReadLine();
         }
@@ -46,10 +46,10 @@ namespace Tests
             sw.Start();
             for (int c = 0; c < size; c++)
             {
-                list.UnsafeAdd(c);
+                list.Add(c);
             }
             sw.Stop();
-            Console.WriteLine("IntList Time: " + sw.ElapsedMilliseconds + " ms");
+            Console.WriteLine("IntList Time: " + sw.ElapsedMilliseconds / 1000.0f + " ms");
 
             List<int> list2 = new List<int>(size);
             Stopwatch sw2 = new Stopwatch();
@@ -59,7 +59,7 @@ namespace Tests
                 list2.Add(c);
             }
             sw2.Stop();
-            Console.WriteLine("List<int> Time: " + sw2.ElapsedMilliseconds + "ms");
+            Console.WriteLine("List<int> Time: " + sw2.ElapsedMilliseconds / 1000.0f + "ms");
         }
 
         static void Main(string[] args)
